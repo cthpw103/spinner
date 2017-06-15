@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+	<title>Spinner</title>
+	<style>
+
+.buttoncx {
+	border: none;
+	background-color: white;
+}
+
+body {
+	margin: 0;
+}
+
+
+.spin:hover {
+    animation-name: rotate; 
+    animation-duration: 2s; 
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(2000deg);}
+}
+h1 {
+	font-family: arial;
+	color: white;
+	text-shadow: 1px 1px black;
+
+}
+
+h2 {
+	font-family: arial;
+	color: white;
+	text-shadow: 1px 1px black;
+
+}
+
+
+	</style>
+</head>
+<body><center>
+<h1>AUTISM SIMULATOR 2017</h1></center>
+<center><h2>By DanielD3V</h2></center>
+<center>
+<img id="theImage" src="spinner-2.png" class="spin" width="300" height="300">
+</body></center><br>
+<center><input type="button" class="buttoncx" id="theButton" value="Ocean Man Spinner" onclick="pictureChange()"></center>
+<script>
+
+(function(global) {
+	
+	var startY = 0;
+
+
+	var enabled = false;
+
+	var handleTouchmove = function(evt) {
+		var el = evt.target;
+
+		while (el !== document.body) {
+			var style = window.getComputedStyle(el);
+
+			if (!style) {
+				break;
+			}
+			if (el.nodeName === 'INPUT' && el.getAttribute('type') === 'range') {
+				return;
+			}
+
+			var scrolling = style.getPropertyValue('-webkit-overflow-scrolling');
+			var overflowY = style.getPropertyValue('overflow-y');
+			var height = parseInt(style.getPropertyValue('height'), 10);
+
+			var isScrollable = scrolling === 'touch' && (overflowY === 'auto' || overflowY === 'scroll');
+			var canScroll = el.scrollHeight > el.offsetHeight;
+
+			if (isScrollable && canScroll) {
+				var curY = evt.touches ? evt.touches[0].screenY : evt.screenY;
+
+				var isAtTop = (startY <= curY && el.scrollTop === 0);
+				var isAtBottom = (startY >= curY && el.scrollHeight - el.scrollTop === height);
+
+				if (isAtTop || isAtBottom) {
+					evt.preventDefault();
+				}
+
+				return;
+			}
+
+			el = el.parentNode;
+		}
+
+		evt.preventDefault();
+	};
+
+	var handleTouchstart = function(evt) {
+
+		startY = evt.touches ? evt.touches[0].screenY : evt.screenY;
+	};
+
+	var enable = function() {
+		window.addEventListener('touchstart', handleTouchstart, false);
+		window.addEventListener('touchmove', handleTouchmove, false);
+		enabled = true;
+	};
+
+	var disable = function() {
+		window.removeEventListener('touchstart', handleTouchstart, false);
+		window.removeEventListener('touchmove', handleTouchmove, false);
+		enabled = false;
+	};
+
+	var isEnabled = function() {
+		return enabled;
+	};
+	var testDiv = document.createElement('div');
+	document.documentElement.appendChild(testDiv);
+	testDiv.style.WebkitOverflowScrolling = 'touch';
+	var scrollSupport = 'getComputedStyle' in window && window.getComputedStyle(testDiv)['-webkit-overflow-scrolling'] === 'touch';
+	document.documentElement.removeChild(testDiv);
+
+	if (scrollSupport) {
+		enable();
+	}
+
+	var iNoBounce = {
+		enable: enable,
+		disable: disable,
+		isEnabled: isEnabled
+	};
+
+	if (typeof module !== 'undefined' && module.exports) {
+
+		module.exports = iNoBounce;
+	}
+	if (typeof global.define === 'function') {
+
+		(function(define) {
+			define('iNoBounce', [], function() { return iNoBounce; });
+		}(global.define));
+	}
+	else {
+
+		global.iNoBounce = iNoBounce;
+	}
+}(this));
+
+(function() {
+    var lastTouch = 0;
+    function preventZoom(e) {
+        var t2 = e.timeStamp;
+        var t1 = lastTouch || t2;
+        var dt = t2 - t1;
+        var fingers = e.touches.length;
+        lastTouch = t2;
+
+        if (!dt || dt >= 300 || fingers > 1) {
+            return;
+        }
+        resetPreventZoom();
+        e.preventDefault();
+        e.target.click();
+    }
+    function resetPreventZoom() {
+        lastTouch = 0;
+    }
+
+    document.addEventListener('touchstart', preventZoom, false);
+    document.addEventListener('touchmove', resetPreventZoom, false);
+})();
+</script>
+
+<script>
+function pictureChange()
+{
+document.getElementById("theImage").src="http://i.imgur.com/xCUhnHi.png";
+}
+</script>
+
+</html>
